@@ -8,6 +8,3 @@ COPY package.json .
 RUN npm i
 RUN npmnpm install -g eslint
 COPY . .
-
-
-CMD [ "sleep","3600" ]
