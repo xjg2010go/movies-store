@@ -18,7 +18,7 @@ describe('StoreDAO',() => {
     it('should find all movies', () => {
         return DAO.Movie.find().then(
             movies => {
-                Except(movies.length.to.equals(8))
+                Except(movies.length.to.equal(8))
                 Except(movies[0].title.to.equal('Pulp Fiction (1994)'))
             }
         )
