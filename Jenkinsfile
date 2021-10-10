@@ -18,6 +18,15 @@ node('workers'){
     }
 
     stage('Coverage Reports') {
-        sh "docker run --rm ${imageName}-test npm run coverage-text"
+        sh "docker run --rm -v $PWD/converage:/app/coverage  ${imageName}-test npm run coverage-html"
+        publishHTML (
+            target: [
+                allowMissing: false,
+                alwaysLinkToLastBuild: false,
+                keepAll: true,
+                reportDir: "$PWD/converage",
+                reportFiles: "index.html",
+                reportNames: "Converage Report"
+            ])
     }
 }

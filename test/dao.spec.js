@@ -16,10 +16,10 @@ describe('StoreDAO',() => {
         return MongoUnit.stop()
     })
     it('should find all movies', () => {
-        return DAO.Movie.find().then(
-            movies => {
-                Except(movies.length.to.equal(8))
-                Except(movies[0].title.to.equal('Pulp Fiction (1994)'))
+        return DAO.Movie.find()
+        .then( movies => {
+                Except(movies.length).to.equal(8)
+                Except(movies[0].title).to.equal('Pulp Fiction (1994)')
             }
         )
     })
