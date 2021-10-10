@@ -18,15 +18,14 @@ node('workers'){
     }
 
     stage('Coverage Reports') {
-        sh "docker run --rm -v $PWD/converage:/app/coverage  ${imageName}-test npm run coverage-html"
-        publishHTML (
-            target: [
-                allowMissing: false,
-                alwaysLinkToLastBuild: false,
-                keepAll: true,
-                reportDir: "$PWD/converage",
-                reportFiles: "index.html",
-                reportNames: "Converage Report"
-            ])
+        sh "docker run --rm -v $PWD/coverage:/app/coverage ${imageName}-test npm run coverage-html"
+        publishHTML (target: [
+            allowMissing: false,
+            alwaysLinkToLastBuild: false,
+            keepAll: true,
+            reportDir: "$PWD/coverage",
+            reportFiles: "index.html",
+            reportName: "Coverage Report"
+        ])
     }
 }
