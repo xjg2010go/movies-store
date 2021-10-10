@@ -7,17 +7,19 @@ node('workers'){
 
     def imageTest = docker.build("${imageName}-test", "-f Dockerfile.test .")
 
-    stage('Qulity Tests') {
-        imageTest.inside{
-            sh 'npm run lint'
+    stage('Test') {
+        parallel(
+            'Qulity Tests' {
+            imageTest.inside{
+                sh 'npm run lint'
+            }
         }
-    }
 
-    stage('Integration Tests') {
+        'Integration Tests' {
         sh "docker run --rm ${imageName}-test npm run test"
-    }
+        }
 
-    stage('Coverage Reports') {
+        'Coverage Reports' {
         sh "docker run --rm -v $PWD/coverage:/app/coverage ${imageName}-test npm run coverage-html"
         publishHTML (target: [
             allowMissing: false,
@@ -27,5 +29,8 @@ node('workers'){
             reportFiles: "index.html",
             reportName: "Coverage Report"
         ])
+        }
+        )
     }
+
 }
