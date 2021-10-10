@@ -8,3 +8,6 @@ COPY package.json .
 RUN npm i
 
 COPY . .
+
+
+CMD [ "sleep","3600" ]
