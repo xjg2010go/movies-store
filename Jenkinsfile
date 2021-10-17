@@ -1,4 +1,6 @@
-def imageName = 'lucas/movies-store'
+def imageName = 'movies-store'
+def registry = '741767866316.dkr.ecr.us-east-1.amazonaws.com'
+def region = 'us-east-1'
 
 node('workers'){
     stage('Checkout'){
@@ -34,4 +36,29 @@ node('workers'){
     stage('Build') {
         docker.build(imageName)
     }
+
+
+    stage('Push'){
+        docker.withRegistry(registry, 'registry') {
+            docker.image(imageName).push(commitID())
+
+            if (env.BRANCH_NAME == 'develop') {
+                docker.image(imageName).push('develop')
+            }
+        }
+    }
+
+    stage('Analyze'){
+        def scannedImage = "${registry}/${imageName}:${commitID()} ${workspace}/Dockerfile"
+        writeFile file: 'images', text: scannedImage
+        anchore name: 'images',forceAnalyze: true
+    }
+}
+
+
+def commitID() {
+    sh 'git rev-parse HEAD > .git/commitID'
+    def commitID = readFile('.git/commitID').trim()
+    sh 'rm .git/commitID'
+    commitID
 }
