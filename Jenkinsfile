@@ -39,11 +39,20 @@ node('workers'){
 
 
     stage('Push'){
-        docker.withRegistry(registry, 'registry') {
+        sh "\$(aws ecr get-login --no-include-email --region ${region}) || true"
+        docker.withRegistry("https://${registry}") {
             docker.image(imageName).push(commitID())
 
-            if (env.BRANCH_NAME == 'develop') {
+            if (env.BRANCH_NAME == 'dev') {
                 docker.image(imageName).push('develop')
+            }
+
+            if (env.BRANCH_NAME == 'preprod') {
+                docker.image(imageName).push('preprod')
+            }
+
+            if (env.BRANCH_NAME == 'main') {
+                docker.image(imageName).push('latest')
             }
         }
     }
